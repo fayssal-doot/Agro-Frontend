@@ -1,0 +1,13 @@
+# Expo / React Native
+node_modules/
+.expo/
+.expo-shared/
+.dist/
+web-build/
+.expo-packager-cache/
+.expo-dev-cache/
+.env
+.env.*
+*.log
+.idea/
+.vscode/
