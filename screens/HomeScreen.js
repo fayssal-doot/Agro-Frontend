@@ -4,9 +4,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../redux/slices/productSlice';
 import ProductCard from '../components/ProductCard';
+import { useLanguage } from '../context/LanguageContext';
+import { t } from '../services/i18n';
 
 const HomeScreen = ({ navigation }) => {
   const dispatch = useDispatch();
+  const { language } = useLanguage();
   const { items, status, error } = useSelector((state) => state.products);
 
   useEffect(() => {
@@ -25,7 +28,7 @@ const HomeScreen = ({ navigation }) => {
       return (
         <View style={styles.emptyBox}>
           <Ionicons name="hourglass-outline" size={48} color="#ccc" />
-          <Text style={styles.emptyText}>Loading products...</Text>
+          <Text style={styles.emptyText}>{t(language, 'loadingProducts')}</Text>
         </View>
       );
     }
@@ -34,11 +37,11 @@ const HomeScreen = ({ navigation }) => {
       return (
         <View style={styles.errorBox}>
           <Ionicons name="cloud-offline-outline" size={48} color="#d9534f" />
-          <Text style={styles.errorTitle}>Oops!</Text>
+          <Text style={styles.errorTitle}>{t(language, 'oops')}</Text>
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity style={styles.retryButton} onPress={() => dispatch(fetchProducts())}>
             <Ionicons name="refresh" size={18} color="#fff" />
-            <Text style={styles.retryText}>Try Again</Text>
+            <Text style={styles.retryText}>{t(language, 'tryAgain')}</Text>
           </TouchableOpacity>
         </View>
       );
@@ -47,8 +50,8 @@ const HomeScreen = ({ navigation }) => {
     return (
       <View style={styles.emptyBox}>
         <Ionicons name="basket-outline" size={48} color="#ccc" />
-        <Text style={styles.emptyTitle}>No Products Yet</Text>
-        <Text style={styles.emptyText}>Check back later for fresh products</Text>
+        <Text style={styles.emptyTitle}>{t(language, 'noProductsYet')}</Text>
+        <Text style={styles.emptyText}>{t(language, 'checkBackLater')}</Text>
       </View>
     );
   };
@@ -56,8 +59,8 @@ const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.header}>Fresh picks near you</Text>
-        <Text style={styles.subheader}>{items.length} products available</Text>
+        <Text style={styles.header}>{t(language, 'freshPicksNearYou')}</Text>
+        <Text style={styles.subheader}>{items.length} {t(language, 'productsAvailable')}</Text>
       </View>
       <FlatList
         data={items}

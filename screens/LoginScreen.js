@@ -3,9 +3,12 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator 
 import { Ionicons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, clearError } from '../redux/slices/authSlice';
+import { useLanguage } from '../context/LanguageContext';
+import { t } from '../services/i18n';
 
 const LoginScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
+  const { language } = useLanguage();
   const { status, error } = useSelector((state) => state.auth);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,13 +20,13 @@ const LoginScreen = ({ navigation, route }) => {
     const newErrors = {};
 
     if (!email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = t(language, 'email') + ' is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       newErrors.email = 'Please enter a valid email address';
     }
 
     if (!password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = t(language, 'password') + ' is required';
     }
 
     setLocalErrors(newErrors);
@@ -38,7 +41,7 @@ const LoginScreen = ({ navigation, route }) => {
       return 'Unable to connect to server. Please check your internet connection.';
     }
     if (error.includes('401') || error.includes('Invalid') || error.includes('credentials')) {
-      return 'Invalid email or password. Please try again.';
+      return t(language, 'loginFailed');
     }
     if (error.includes('429')) {
       return 'Too many login attempts. Please wait a moment and try again.';
@@ -79,9 +82,9 @@ const LoginScreen = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Welcome Back</Text>
+        <Text style={styles.title}>{t(language, 'login')}</Text>
         <Text style={styles.subtitle}>
-          Login as {userType === 'store_owner' ? 'Store Owner' : userType?.charAt(0).toUpperCase() + userType?.slice(1) || 'User'}
+          {t(language, 'login')} {t(language, 'as')} {userType === 'store_owner' ? t(language, 'seller') : userType?.charAt(0).toUpperCase() + userType?.slice(1) || 'User'}
         </Text>
       </View>
 
@@ -95,7 +98,7 @@ const LoginScreen = ({ navigation, route }) => {
             if (localErrors.email) setLocalErrors(prev => ({ ...prev, email: null }));
             if (error) dispatch(clearError());
           }} 
-          placeholder="Email address" 
+          placeholder={t(language, 'email')} 
           autoCapitalize="none" 
           keyboardType="email-address"
           style={styles.input}
@@ -114,7 +117,7 @@ const LoginScreen = ({ navigation, route }) => {
             if (localErrors.password) setLocalErrors(prev => ({ ...prev, password: null }));
             if (error) dispatch(clearError());
           }} 
-          placeholder="Password" 
+          placeholder={t(language, 'password')} 
           secureTextEntry={!showPassword} 
           style={styles.input}
           placeholderTextColor="#999"
@@ -142,19 +145,19 @@ const LoginScreen = ({ navigation, route }) => {
         {status === 'loading' ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.buttonText}>Login</Text>
+          <Text style={styles.buttonText}>{t(language, 'login')}</Text>
         )}
       </TouchableOpacity>
 
       {/* Register Link */}
       <TouchableOpacity onPress={() => navigation.navigate('Register', { type: userType })}>
-        <Text style={styles.link}>Don't have an account? <Text style={styles.linkBold}>Sign Up</Text></Text>
+        <Text style={styles.link}>{t(language, 'dontHaveAccount')} <Text style={styles.linkBold}>{t(language, 'register')}</Text></Text>
       </TouchableOpacity>
 
       {/* Change User Type */}
       <TouchableOpacity onPress={() => navigation.navigate('UserType')} style={styles.changeTypeButton}>
         <Ionicons name="swap-horizontal-outline" size={16} color="#1B4332" />
-        <Text style={styles.changeTypeText}>Change account type</Text>
+        <Text style={styles.changeTypeText}>{t(language, 'continue')}</Text>
       </TouchableOpacity>
     </View>
   );
